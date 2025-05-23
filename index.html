@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入居年数計算</title>
+    <style>
+        /* 全体のページスタイル */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 30px;
+        }
+        /* 見出しのスタイル */
+        h1 {
+            color: #333;
+            font-size: 35px;
+        }
+        /* 入力エリアと結果表示をまとめている部分 */
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        /* 入力ラベルとフィールドのスタイル */
+        label, input {
+            font-size: 25px;
+            display: block;
+            margin: 15px auto;
+        }
+        /* 入力フィールドのデザイン */
+        input {
+            padding: 10px;
+            width: 250px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        /* ボタンのスタイル */
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        /* ボタンホバー時の色変更 */
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* リセットボタンのスタイル */
+        .reset-btn {
+            background-color: #6c757d;
+        }
+        /* リセットボタンホバー時の色変更 */
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+        /* 結果表示のスタイル */
+        p {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+            white-space: pre-line;
+        }
+        
+        /* モバイル向けのサイズ調整 */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+            .container {
+                padding: 20px;
+            }
+            button {
+                font-size: 18px;
+            }
+            input {
+                font-size: 18px;
+                width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>入居年数計算ツール</h1>
+
+    <div class="container">
+        <!-- 入居開始日の入力欄 -->
+        <label for="startDate">入居開始日:</label>
+        <input type="date" id="startDate">
+
+        <!-- 入居終了日の入力欄 -->
+        <label for="endDate">入居終了日:</label>
+        <input type="date" id="endDate">
+
+        <!-- 計算ボタン -->
+        <button onclick="calculateYears()">計算</button>
+
+        <!-- リセットボタン -->
+        <button class="reset-btn" onclick="resetForm()">リセット</button>
+
+        <!-- 結果表示エリア -->
+        <p id="result"></p>
+    </div>
+    <script>
+        function calculateYears() {
+            // 入居開始日と入居終了日の入力値を取得
+            let startDateInput = document.getElementById("startDate").value;
+            let endDateInput = document.getElementById("endDate").value;
+
+            // 入力がどちらか片方でも空欄ならエラーメッセージを表示
+            if (!startDateInput || !endDateInput) {
+                document.getElementById("result").innerText = "入居開始日と入居終了日を両方入力してください。";
+                return;
+            }
+
+            // 入居開始日と入居終了日をDate型に変換
+            let startDate = new Date(startDateInput);
+            let endDate = new Date(endDateInput);
+
+            // 入居終了日が入居開始日より前の日付の場合、エラーメッセージを表示
+            if (endDate < startDate) {
+                document.getElementById("result").innerText = "入居終了日は入居開始日より後の日付を選択してください。";
+                return;
+            }
+
+            // 総入居月数を計算
+            let totalMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+            let years = Math.floor(totalMonths / 12);  // 入居年数（切り捨て）
+            let months = totalMonths % 12;  // 余った月数
+
+            // 入居年数に応じた割合を設定
+            let percentage = 100;
+            if (years === 5) percentage = 16.6;
+            else if (years === 4) percentage = 33.3;
+            else if (years === 3) percentage = 50;
+            else if (years === 2) percentage = 66.6;
+            else if (years === 1) percentage = 83.3;
+            else if (years === 0) percentage = 100;
+
+            // 計算結果を画面に表示
+            document.getElementById("result").innerText = `入居年数: ${years}年${months}ヶ月\n割合: ${percentage}%`;
+        }
+
+        // リセットボタン用の関数
+        function resetForm() {
+            // 入力欄と結果表示領域をクリアする
+            document.getElementById("startDate").value = "";
+            document.getElementById("endDate").value = "";
+            document.getElementById("result").innerText = "";
+        }
+    </script>
+</body>
+
+</html>
